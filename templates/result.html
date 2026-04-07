@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Results</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #0b0b0b;
+            color: white;
+            margin: 0;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: auto;
+            padding: 30px 0;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        /* AI BOX */
+        .ai-box {
+            background: #111;
+            border-left: 5px solid #facc15;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        /* DETECTION BOX */
+        .detect-box {
+            background: #111;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .detect-box img {
+            margin-top: 10px;
+            border-radius: 10px;
+        }
+
+        /* DESIGN CARDS */
+        .card {
+            background: #111;
+            padding: 20px;
+            margin-bottom: 25px;
+            border-radius: 12px;
+            border: 1px solid #222;
+        }
+
+        .card img {
+            margin: 10px;
+            border-radius: 10px;
+        }
+
+        .grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .score {
+            color: #facc15;
+            font-weight: bold;
+        }
+
+        a {
+            color: #facc15;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .grid {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            img {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+    </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>🏠 Recommended Designs</h1>
+
+    <!-- 🤖 AI TEXT -->
+    <div class="ai-box">
+        <h2>🤖 AI Recommendation</h2>
+        <p>{{ ai_text }}</p>
+    </div>
+
+
+    <!-- 📸 DETECTION -->
+    <div class="detect-box">
+        <h2>📸 Plot Detection</h2>
+
+        {% if detection_used %}
+            <p>✅ Detected: <b>{{ detected_plot }}</b> (Confidence: {{ confidence }})</p>
+        {% else %}
+            <p>⚠️ Detection unclear — using manual selection</p>
+        {% endif %}
+
+        {% if processed_image %}
+            <img src="{{ url_for('static', filename=processed_image) }}" width="300">
+            <p>Green outline shows detected boundary</p>
+        {% else %}
+            <p>No image uploaded</p>
+        {% endif %}
+    </div>
+
+
+    <!-- 🏗️ DESIGNS -->
+    {% if designs %}
+        {% for design in designs %}
+            <div class="card">
+
+                <h2>{{ design.name }}</h2>
+
+                <p>{{ design.description }}</p>
+
+                <p><b>Area:</b> {{ sqft }} sqft</p>
+
+                <p class="score">Match Score: {{ design.score }}/10</p>
+
+                <div class="grid">
+
+                    <div>
+                        <h3>Floor Plan</h3>
+                        <img src="{{ url_for('static', filename='images/' + design.plan_image) }}" width="250">
+                    </div>
+
+                    <div>
+                        <h3>3D Elevation</h3>
+                        <img src="{{ url_for('static', filename='images/' + design.elevation_image) }}" width="250">
+                    </div>
+                    <div>
+                        <h3>Exterior View</h3>
+                        <img src="{{ url_for('static', filename='images/' + design.exterior_image) }}" width="250">
+                    </div>
+
+                </div>
+
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>No matching designs found</p>
+    {% endif %}
+
+
+    <br>
+    <a href="/">⬅ Back to Home</a>
+
+</div>
+
+</body>
+</html>
